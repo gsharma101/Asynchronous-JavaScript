@@ -121,12 +121,16 @@ const getCountryData = function (country) {
     .then((data) => {
       renderCountry(data[0]);
       const neighbour = data[0].borders[0];
-
       // ? Country 2
       if (!neighbour) return;
       return fetch(`https://restcountries.com/v2/alpha/${neighbour}`);
-    }).then(response => response.json())
-    .then(data => renderCountry(data, 'neighbour'));
+    })
+    .then(response => response.json())
+    .then(data => renderCountry(data, 'neighbour'))
+    .catch(err => alert(err));
 }
 
-getCountryData('Republic of India')
+
+btn.addEventListener('click', function () {
+  getCountryData('Republic of India');
+});
