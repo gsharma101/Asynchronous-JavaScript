@@ -211,7 +211,7 @@ TEST COORDINATES 2: -33.933, 18.474
 GOOD LUCK 😀
 
 */
-
+/*
 const whereAmI = function (lat, lng) {
   fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`)
     .then((response) => {
@@ -238,3 +238,18 @@ const whereAmI = function (lat, lng) {
 whereAmI(52.508, 13.381);
 // whereAmI(19.037, 72.873);
 // whereAmI(-33.933, 18.474);
+*/
+
+const lotteryPromise = new Promise(function (resolve, reject) {
+
+  console.log('Lotter draw is happening...');
+  setTimeout(function () {
+    if (Math.random() >= 0.5) {
+      resolve("You WIN 🤑");
+    } else {
+      reject(new Error("You lost your money 💩"));
+    }
+  }, 2000);
+});
+
+lotteryPromise.then(res => console.log(res)).catch(err => console.error(err));
