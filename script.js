@@ -240,6 +240,7 @@ whereAmI(52.508, 13.381);
 // whereAmI(-33.933, 18.474);
 */
 
+/*
 const lotteryPromise = new Promise(function (resolve, reject) {
 
   console.log('Lotter draw is happening...');
@@ -253,3 +254,76 @@ const lotteryPromise = new Promise(function (resolve, reject) {
 });
 
 lotteryPromise.then(res => console.log(res)).catch(err => console.error(err));
+
+// ? Real World Example of promisifying setTimeout
+const wait = function (seconds) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, seconds * 1000);
+  });
+}
+
+wait(1)
+  .then(() => {
+    console.log('1 Second Passed');
+    return wait(1);
+  })
+  .then(() => {
+    console.log('2 Second Passed');
+    return wait(1);
+  })
+  .then(() => {
+    console.log('3 Second Passed');
+    return wait(1);
+  })
+  .then(() => {
+    console.log('4 Second Passed');
+    return wait(1);
+  })
+  .then(() =>
+    console.log('5 Second passed')
+  );
+
+Promise.resolve('abc').then(x => console.log(x));
+Promise.reject(new Error('Problem!')).then(x => console.error(x));
+*/
+
+
+const getPosition = function () {
+  return new Promise(function (resolve, reject) {
+    // navigator.geolocation.getCurrentPosition(
+    //   position => resolve(position),
+    //   err => reject(err));
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+};
+
+getPosition().then(pos => console.log(pos));
+
+const whereAmI = function () {
+  getPosition().then(pos => {
+    const { latitude: lat, longitude: lng } = pos.coords;
+
+    return fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
+  })
+    .then((response) => {
+      if (!response.ok)
+        throw new Error(`Problem with geocoding ${response.status}`);
+      return response.json();
+    })
+    .then((data) => {
+      // console.log(data);
+      // console.log(`You are in ${data.city}, ${data.country}`);
+
+      return fetch(`https://restcountries.com/v2/name/${data.country}`);
+    })
+    .then((response) => {
+      if (!response.ok)
+        throw new Error(`Country not found ${response.status}`);
+
+      return response.json();
+    })
+    .then((data) => renderCountry(data[0]))
+    .catch(err => console.log(`${err.message}`));
+}
+
+btn.addEventListener('click', whereAmI);
