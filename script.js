@@ -287,7 +287,7 @@ Promise.resolve('abc').then(x => console.log(x));
 Promise.reject(new Error('Problem!')).then(x => console.error(x));
 */
 
-
+/*
 const getPosition = function () {
   return new Promise(function (resolve, reject) {
     // navigator.geolocation.getCurrentPosition(
@@ -327,3 +327,30 @@ const whereAmI = function () {
 }
 
 btn.addEventListener('click', whereAmI);
+*/
+
+// ES 2017
+
+const getPosition = function () {
+  return new Promise(function (resolve, reject) {
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+};
+
+const whereAmI = async function () {
+  // ? Geolocation
+  const pos = await getPosition();
+  const { latitude: lat, longitude: lng } = pos.coords;
+
+  // ? Reverse Geocoding
+  const resGeo = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
+  const dataGeo = await resGeo.json();
+  // console.log(dataGeo);
+
+  // ? Country Data
+  const res = await fetch(`https://restcountries.com/v2/name/${dataGeo.country}`);
+  const data = await res.json();
+  renderCountry(data[0]);
+}
+
+whereAmI();
